@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /.netlify/functions/
+Disallow: /cdn-cgi/
+
+Sitemap: https://dsscryptosignal.netlify.app/sitemap.xml
+
+# Crawl delay
+Crawl-delay: 10
