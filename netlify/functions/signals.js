@@ -16,14 +16,14 @@ exports.handler = async function(event) {
     }
 
     try {
-        const sigRes = await fetch(
+        var sigRes = await fetch(
             'https://raw.githubusercontent.com/liankacur-cell/dss-signal-system2/system2/dss_signals.json',
             { headers: { 'Accept': 'application/json' } }
         );
-        const raw = await sigRes.json();
+        var raw = await sigRes.json();
 
-        const signals = raw.signals || [];
-        const dirCount = { LONG: 0, SHORT: 0 };
+        var signals = raw.signals || [];
+        var dirCount = { LONG: 0, SHORT: 0 };
         signals.forEach(function(x) {
             if (x.dir === 'LONG') dirCount.LONG++;
             else dirCount.SHORT++;
@@ -47,7 +47,8 @@ exports.handler = async function(event) {
         var symbols = TOP_PAIRS.map(function(s) { return '"' + s + '"'; }).join(',');
         var mktRes = await fetch('https://api.binance.com/api/v3/ticker/24hr?symbols=[' + symbols + ']');
         var mktRaw = await mktRes.json();
-        var market = (mktRaw || []).map(function(x) {
+        var mktArr = Array.isArray(mktRaw) ? mktRaw : [];
+        var market = mktArr.map(function(x) {
             return {
                 p: (x.symbol || '???').replace('USDT', ''),
                 pr: parseFloat(x.lastPrice) || 0,
