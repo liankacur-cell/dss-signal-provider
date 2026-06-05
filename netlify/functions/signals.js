@@ -1,6 +1,6 @@
-const fetch = require('node-fetch');
+var fetch = require('node-fetch');
 
-const TOP_PAIRS = ['BTCUSDT','ETHUSDT','BNBUSDT','SOLUSDT','XRPUSDT','DOGEUSDT','ADAUSDT'];
+var TOP_PAIRS = ['BTCUSDT','ETHUSDT','BNBUSDT','SOLUSDT','XRPUSDT','DOGEUSDT','ADAUSDT'];
 
 exports.handler = async function(event) {
     if (event.httpMethod === 'OPTIONS') {
@@ -44,17 +44,21 @@ exports.handler = async function(event) {
             })
         };
 
-        var symbols = TOP_PAIRS.map(function(s) { return '"' + s + '"'; }).join(',');
-        var mktRes = await fetch('https://api.binance.com/api/v3/ticker/24hr?symbols=[' + symbols + ']');
-        var mktRaw = await mktRes.json();
-        var mktArr = Array.isArray(mktRaw) ? mktRaw : [];
-        var market = mktArr.map(function(x) {
-            return {
-                p: (x.symbol || '???').replace('USDT', ''),
-                pr: parseFloat(x.lastPrice) || 0,
-                ch: parseFloat(x.priceChangePercent) || 0
-            };
-        });
+        var market = [];
+        for (var i = 0; i < TOP_PAIRS.length; i++) {
+            try {
+                var url = 'https://api.binance.com/api/v3/ticker/24hr?symbol=' + TOP_PAIRS[i];
+                var mktRes = await fetch(url);
+                var mktRaw = await mktRes.json();
+                if (mktRaw && mktRaw.symbol) {
+                    market.push({
+                        p: (mktRaw.symbol || '???').replace('USDT', ''),
+                        pr: parseFloat(mktRaw.lastPrice) || 0,
+                        ch: parseFloat(mktRaw.priceChangePercent) || 0
+                    });
+                }
+            } catch(e) {}
+        }
 
         return {
             statusCode: 200,
