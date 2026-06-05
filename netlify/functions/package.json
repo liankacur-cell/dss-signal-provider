@@ -1,8 +1,0 @@
-{
-  "name": "dss-signal-provider",
-  "version": "1.0.0",
-  "description": "DSS Signal Provider - Crypto Trading Signal System",
-  "dependencies": {
-    "node-fetch": "^2.7.0"
-  }
-}
